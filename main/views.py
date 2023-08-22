@@ -1,15 +1,44 @@
-from rest_framework.viewsets import ModelViewSet
-from django_filters import rest_framework as filters
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.parsers import MultiPartParser
-from .serializers import ProductModelSerializer, CategoryModelSerializer, ColorModelSerializer, ProductImageModelSerializer
-from .permissions import IsSuperuser, ProductPermission
-from .filters import ProductFilter
-from .models import *
+from rest_framework.viewsets import ModelViewSet
+
+from main.filters import ProductFilter
+from main.models import Product, Category, ProductImage, ProductColor
+from main.permissions import IsSuperUser, ProductPermission
+from main.serializers import ProductModelSerializer, CategoryModelSerializer, ProductImageModelSerializer, \
+    ProductColorModelSerializer, PostActiveSerializer
 
 
-class ProductModelViewSet(ModelViewSet):
-    permission_classes = (IsSuperuser, )
-    queryset = Product.objects.all()
+class CategoryClassViewSet(ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategoryModelSerializer
+    permission_classes = (IsSuperUser,)
+
+
+class ProductClassViewSet(ModelViewSet):
+    queryset = Product.objects.filter(is_active=True)
     serializer_class = ProductModelSerializer
-    filter_backends = (filters.DjangoFilterBackend, )
+    permission_classes = (ProductPermission,)
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = ProductFilter
+
+
+class ProductImageViewSet(ModelViewSet):
+    queryset = ProductImage.objects.all()
+    serializer_class = ProductImageModelSerializer
+    permission_classes = (ProductPermission,)
+    parser_classes = [MultiPartParser]
+
+
+class ProductColorViewSet(ModelViewSet):
+    queryset = ProductColor.objects.all()
+    serializer_class = ProductColorModelSerializer
+    permission_classes = (ProductPermission,)
+    http_method_names = ("get", "post", "delete")
+
+
+class IsActiveViewSet(ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = PostActiveSerializer
+    permission_classes = (IsSuperUser,)
+    http_method_names = ("patch",)
