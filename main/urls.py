@@ -1,28 +1,20 @@
-# from django.urls import path, include
-# from rest_framework.routers import DefaultRouter
-# from .views import ProductModelViewSet
-#
-#
-# router = DefaultRouter()
-# router.register("products", ProductModelViewSet, basename="products")
-#
-#
-# urlpatterns = [
-#     path('', include(router.urls))
-# ]
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from main.views import ProductClassViewSet, CategoryClassViewSet, ProductImageViewSet, ProductColorViewSet, \
-    IsActiveViewSet
+    IsActiveViewSet, UserView, UserActiveView, ProductShopModelViewSet
 
 router = DefaultRouter()
 router.register('products', ProductClassViewSet, basename='products')
 router.register('categories', CategoryClassViewSet, basename='categories')
 router.register('images', ProductImageViewSet, basename='images')
 router.register('colors', ProductColorViewSet, basename='colors')
-router.register('is_active', IsActiveViewSet, basename='is_active')
+router.register('users', UserView, 'user')
+router.register('user', UserActiveView, 'user')
+router.register("shop", ProductShopModelViewSet, basename="product_shop")
+
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('', include(router.urls)),
+    path('products/<int:pk>/active/', IsActiveViewSet.as_view(), name="product_active")
 ]

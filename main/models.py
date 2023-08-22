@@ -1,51 +1,5 @@
-# from django.db import models
-#
-#
-# class Category(models.Model):
-#     title = models.CharField(max_length=50)
-#
-#     class Meta:
-#         verbose_name = "Category"
-#         verbose_name_plural = "Categories"
-#
-#     def __str__(self) -> str:
-#         return self.title
-#
-#
-# class Color(models.Model):
-#     title = models.CharField(max_length=50)
-#
-#     def __str__(self) -> str:
-#         return self.title
-#
-#
-# class Product(models.Model):
-#     name = models.CharField(max_length=128)
-#     brand = models.CharField(max_length=50, blank=True)
-#     price = models.PositiveIntegerField()
-#     count = models.PositiveIntegerField()
-#     description = models.TextField()
-#     dimension = models.CharField(max_length=200)
-#     displaysize = models.PositiveIntegerField()
-#     colors = models.ManyToManyField(Color, related_name="products")
-#     categories = models.ManyToManyField(Category, related_name="category")
-#     created_at = models.DateTimeField(auto_now_add=True)
-#
-#     class Meta:
-#         ordering = ['-created_at']
-#
-#     def __str__(self) -> str:
-#         return self.name
-#
-#
-# class ProductImage(models.Model):
-#     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-#     image = models.ImageField(upload_to=f"images/{product}/", blank=True)
-#
-#     def __str__(self) -> str:
-#         return self.product.name
-
 from django.db import models
+from django.contrib.auth.models import User
 from django.db.models import CASCADE, ManyToManyField, BooleanField
 
 
@@ -88,3 +42,27 @@ class Product(models.Model):
 class ProductImage(models.Model):
     image = models.ImageField(upload_to='product_images/', blank=True, null=True)
     to_product = models.ForeignKey(Product, CASCADE)
+
+
+class ProductShop(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    count = models.PositiveIntegerField()
+    color = models.ForeignKey(ProductColor, on_delete=models.SET_NULL, null=True)
+    price = models.PositiveIntegerField()
+    sum_price = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        self.sum_price = self.count * self.product.price
+        return super().save(*args, **kwargs)
+
+
+class Contact(models.Model):
+    name = models.CharField(max_length=80)
+    email = models.EmailField(max_length=128)
+    submit = models.CharField(max_length=200)
+    body = models.TextField()
+
+    def __str__(self):
+        return self.name
