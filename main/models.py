@@ -57,7 +57,9 @@ class Category(models.Model):
 
 class ProductColor(models.Model):
     color = models.CharField(max_length=75)
-
+    
+    def __str__(self):
+        return self.color
 
 class Product(models.Model):
     title = models.CharField(max_length=255)

@@ -1,12 +1,10 @@
 from django.contrib.auth.models import User
-from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import IsAuthenticated
 
+from .model import ProductShop, Contact
 from users.permissions import UserPermission, IsSuperUser
-from users.serializers import UserSerializers, UserActiveSerializers
-
-
-# Create your views here.
+from users.serializers import UserSerializers, UserActiveSerializers, ProductShopModelSerializer, Contact
 
 
 class UserView(ModelViewSet):
@@ -20,3 +18,9 @@ class UserActiveView(ModelViewSet):
     queryset = User.objects.all()
     permission_classes = (IsSuperUser,)
     http_method_names = ("patch",)
+
+
+class ProductShopModelViewSet(ModelViewSet):
+    serializer_class = ProductShopModelSerializer
+    queryset = ProductShop.objects.all()
+    permission_classes = (IsAuthenticated,)

@@ -2,8 +2,10 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import CharField
+from rest_framework.fields import HiddenField, CurrentUserDefault
 
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, ReadOnlyField
+from .model import ProductShop, Contact
 
 
 class UserSerializers(ModelSerializer):
@@ -11,7 +13,7 @@ class UserSerializers(ModelSerializer):
 
     class Meta:
         model = User
-        fields = 'id', 'name', 'username', 'password', 'confirm_password', 'email'
+        fields = 'id', 'first_name', 'last_name', 'username', 'password', 'confirm_password', 'email'
 
     def create(self, validated_data):
         password = validated_data['password']
@@ -41,3 +43,18 @@ class UserActiveSerializers(ModelSerializer):
     class Meta:
         model = User
         fields = 'id', 'is_staff'
+
+
+class ProductShopModelSerializer(ModelSerializer):
+    user = HiddenField(default=CurrentUserDefault())
+    sum_price = ReadOnlyField()
+
+    class Meta:
+        model = ProductShop
+        fields = "id", "user", "product", "count", "color", "created_at", "sum_price"
+
+
+class ContactModelSerializer(ModelSerializer):
+    class Meta:
+        model = Contact
+        fields = "__all__"
