@@ -44,8 +44,9 @@
 #
 #     def __str__(self) -> str:
 #         return self.product.name
+
 from django.db import models
-from django.db.models import ForeignKey, CASCADE, ManyToManyField, BooleanField
+from django.db.models import CASCADE, ManyToManyField, BooleanField
 
 
 class Category(models.Model):
@@ -57,9 +58,10 @@ class Category(models.Model):
 
 class ProductColor(models.Model):
     color = models.CharField(max_length=75)
-    
+
     def __str__(self):
         return self.color
+
 
 class Product(models.Model):
     title = models.CharField(max_length=255)

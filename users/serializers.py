@@ -5,7 +5,7 @@ from rest_framework.fields import CharField
 from rest_framework.fields import HiddenField, CurrentUserDefault
 
 from rest_framework.serializers import ModelSerializer, ReadOnlyField
-from .model import ProductShop, Contact
+from .models import ProductShop, Contact
 
 
 class UserSerializers(ModelSerializer):

@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 
-from .model import ProductShop, Contact
+from .models import ProductShop, Contact
 from users.permissions import UserPermission, IsSuperUser
 from users.serializers import UserSerializers, UserActiveSerializers, ProductShopModelSerializer, Contact
 
