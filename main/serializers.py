@@ -4,7 +4,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.fields import CharField
 from rest_framework.fields import HiddenField, CurrentUserDefault
 from rest_framework.serializers import ModelSerializer, ReadOnlyField
-
+from django.shortcuts import get_object_or_404
 from main.models import Category, Product, ProductColor, ProductImage, ProductShop, Contact
 
 
@@ -55,15 +55,13 @@ class ProductShopModelSerializer(ModelSerializer):
 
     def create(self, validated_data):
         count = validated_data.get('count')
-        quantity = big = ProductModelSerializer(validated_data.get("product")).data
-        if count <= quantity['quantity']:
-            quantity['quantity'] -= count
-            post = ProductImageModelSerializer(data=quantity, instance=big)
-            if post.is_valid():
-                post.update(instance=big, validated_data=quantity)
-            data = ProductShop(**validated_data)
-            data.save()
-            return data
+        product = validated_data['product']
+        if not isinstance(product, Product):
+            product = get_object_or_404(Product, pk=product)
+        if count <= product.quantity:
+            product.quantity -= count
+            product.save()
+            return super().create(validated_data)
         raise ValidationError("Buncha mahsulot yo'q")
 
 

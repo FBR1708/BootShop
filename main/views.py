@@ -68,28 +68,6 @@ class ProductShopModelViewSet(ModelViewSet):
     queryset = ProductShop.objects.all()
     permission_classes = (IsAuthenticated,)
 
-    def get_object(self):
-        try:
-            pk = self.kwargs['product']
-            instance = Product.objects.get(pk=pk)
-        except Product.DoesNotExist:
-            raise ValueError("Bizda bunday malumot yoq")
-
-    def create(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(data=request.data)
-        quantity = ProductModelSerializer(data=request.data.product).data
-        if request.data.count <= quantity.data['quantity']:
-            quantity['quantity'] -= request.data.count
-            bigdata = ProductModelSerializer(instance=instance, data=quantity)
-            if bigdata.is_valid():
-                bigdata.save()
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-            return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
-        raise ValueError("Bunday narsa yoq")
-
 
 class ContactListCreateAPIView(ListCreateAPIView):
     serializer_class = ContactModelSerializer
