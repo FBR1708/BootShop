@@ -3,9 +3,9 @@ from django.contrib.auth.models import User
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import CharField
 from rest_framework.fields import HiddenField, CurrentUserDefault
+from rest_framework.serializers import ModelSerializer, ReadOnlyField
 
 from main.models import Category, Product, ProductColor, ProductImage, ProductShop, Contact
-from rest_framework.serializers import ModelSerializer, ReadOnlyField
 
 
 class UserSerializers(ModelSerializer):
@@ -58,9 +58,9 @@ class ProductShopModelSerializer(ModelSerializer):
         quantity = big = ProductModelSerializer(validated_data.get("product")).data
         if count <= quantity['quantity']:
             quantity['quantity'] -= count
-            post = ProductImageModelSerializer(data=quantity)
+            post = ProductImageModelSerializer(data=quantity, instance=big)
             if post.is_valid():
-                post.save()
+                post.update(instance=big, validated_data=quantity)
             data = ProductShop(**validated_data)
             data.save()
             return data
@@ -86,8 +86,8 @@ class ProductColorModelSerializer(ModelSerializer):
 
 
 class ProductModelSerializer(ModelSerializer):
-    # to_category = CategoryModelSerializer(many=True, read_only=True)
-    # to_color = ProductColorModelSerializer(many=True, read_only=True)
+    to_category = CategoryModelSerializer(many=True, read_only=True)
+    to_color = ProductColorModelSerializer(many=True, read_only=True)
 
     class Meta:
         model = Product
