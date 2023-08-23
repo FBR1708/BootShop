@@ -55,11 +55,12 @@ class ProductShopModelSerializer(ModelSerializer):
 
     def create(self, validated_data):
         count = validated_data.get('count')
-        quantity = ProductModelSerializer(validated_data.get("product")).data
+        quantity = big = ProductModelSerializer(validated_data.get("product")).data
         if count <= quantity['quantity']:
             quantity['quantity'] -= count
-            big_ser = Product(**quantity)
-            big_ser.save()
+            post = ProductImageModelSerializer(data=quantity)
+            if post.is_valid():
+                post.save()
             data = ProductShop(**validated_data)
             data.save()
             return data
@@ -85,8 +86,8 @@ class ProductColorModelSerializer(ModelSerializer):
 
 
 class ProductModelSerializer(ModelSerializer):
-    to_category = CategoryModelSerializer(many=True, read_only=True)
-    to_color = ProductColorModelSerializer(many=True, read_only=True)
+    # to_category = CategoryModelSerializer(many=True, read_only=True)
+    # to_color = ProductColorModelSerializer(many=True, read_only=True)
 
     class Meta:
         model = Product
