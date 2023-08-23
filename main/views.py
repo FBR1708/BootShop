@@ -1,16 +1,16 @@
 from django.contrib.auth.models import User
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.generics import UpdateAPIView
+from rest_framework.generics import UpdateAPIView, ListCreateAPIView
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
 from .filters import ProductFilter
-from .models import Product, Category, ProductImage, ProductColor, ProductShop
-from .permissions import IsSuperUser, ProductPermission, UserPermission
+from .models import Product, Category, ProductImage, ProductColor, ProductShop, Contact
+from .permissions import IsSuperUser, ProductPermission, UserPermission, ContactPermission
 from .serializers import ProductModelSerializer, CategoryModelSerializer, ProductImageModelSerializer, \
     ProductColorModelSerializer, PostActiveSerializer, UserSerializers, UserActiveSerializers, \
-    ProductShopModelSerializer
+    ProductShopModelSerializer, ContactModelSerializer
 
 
 class CategoryClassViewSet(ModelViewSet):
@@ -54,7 +54,7 @@ class UserView(ModelViewSet):
     queryset = User.objects.all()
 
 
-class UserActiveView(ModelViewSet):
+class UserActiveView(UpdateAPIView):
     serializer_class = UserActiveSerializers
     queryset = User.objects.all()
     permission_classes = (IsSuperUser,)
@@ -65,3 +65,9 @@ class ProductShopModelViewSet(ModelViewSet):
     serializer_class = ProductShopModelSerializer
     queryset = ProductShop.objects.all()
     permission_classes = (IsAuthenticated,)
+
+
+class ContactListCreateAPIView(ListCreateAPIView):
+    serializer_class = ContactModelSerializer
+    queryset = Contact.objects.all()
+    permission_classes = (ContactPermission, )

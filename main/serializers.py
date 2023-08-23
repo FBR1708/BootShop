@@ -53,6 +53,18 @@ class ProductShopModelSerializer(ModelSerializer):
         model = ProductShop
         fields = "id", "user", "product", "count", "color", "created_at", "sum_price"
 
+    def create(self, validated_data):
+        count = validated_data.get('count')
+        quantity = ProductModelSerializer(validated_data.get("product")).data
+        if count <= quantity['quantity']:
+            quantity['quantity'] -= count
+            big_ser = Product(**quantity)
+            big_ser.save()
+            data = ProductShop(**validated_data)
+            data.save()
+            return data
+        raise ValidationError("Buncha mahsulot yo'q")
+
 
 class ContactModelSerializer(ModelSerializer):
     class Meta:
@@ -73,8 +85,8 @@ class ProductColorModelSerializer(ModelSerializer):
 
 
 class ProductModelSerializer(ModelSerializer):
-    category = CategoryModelSerializer(many=True, read_only=True)
-    color = ProductColorModelSerializer(many=True, read_only=True)
+    to_category = CategoryModelSerializer(many=True, read_only=True)
+    to_color = ProductColorModelSerializer(many=True, read_only=True)
 
     class Meta:
         model = Product

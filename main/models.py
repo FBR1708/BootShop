@@ -55,6 +55,7 @@ class ProductShop(models.Model):
 
     def save(self, *args, **kwargs):
         self.sum_price = self.count * self.product.price
+        self.price = self.product.price
         return super().save(*args, **kwargs)
 
 
@@ -63,6 +64,8 @@ class Contact(models.Model):
     email = models.EmailField(max_length=128)
     submit = models.CharField(max_length=200)
     body = models.TextField()
+    created_at = models.DateTimeField(auto_now=True)
+
 
     def __str__(self):
         return self.name
